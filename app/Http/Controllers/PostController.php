@@ -121,7 +121,7 @@ class PostController extends Controller
 
     public function trashed()
     {
-        $posts = Post::onlyTrashed()->get();
+        $posts = Post::onlyTrashed()->paginate(2);
         return view('trashed', compact('posts'));
     }
 
@@ -135,7 +135,7 @@ class PostController extends Controller
 
     public function forceDelete(string $id)
     {
-        $post = Post::onlyTrashed()->findOrFail($id);
+        $post = Post::onlyTrashed()->findOrFail($id); 
         File::delete(public_path($post->image));
         $post->forceDelete();
         
