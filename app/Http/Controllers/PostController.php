@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Post;
 use File;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class PostController extends Controller
 {
@@ -14,8 +15,29 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::paginate(2);
-        return view('index ', compact('posts'));
+        // $posts = Post::paginate(2);
+        // return view('index ', compact('posts'));
+
+    //STORING DATA IN CACHE
+        // $posts = Cache::remember('posts', 60, function(){//60 means 60 seconds
+        //     return Post::with('category')->paginate(2);
+        // });
+
+        // return view('index ', compact('posts'));
+
+    //STORING DATA IN CACHE FOREVER
+        // $posts = Cache::rememberForever('posts', function(){
+        //     return Post::with('category')->paginate(2);
+        // });
+
+        // return view('index ', compact('posts'));
+
+    //USING CACHE WITH PAGINATION
+        $posts = Cache::remember('posts-page-'.request('page', 1), 60*3, function(){
+            return Post::with('category')->paginate(3);
+        });
+
+        return view('index', compact('posts'));
 
         // $categories = Category::all();
         // return view('index ', compact('categories'));

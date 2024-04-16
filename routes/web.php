@@ -4,6 +4,7 @@ use App\Http\Controllers\PostController;
 use App\Mail\OrderShipped;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
@@ -107,4 +108,9 @@ Route::get('send-mail', function(){
     Route::get('flash-session', function(Request $request){
         $request->session()->flash('status', 'true');
         return redirect('get-session');
+    });
+
+// REMOVING DATA FROM CACHE
+    Route::get('forget-cache', function(){
+        Cache::forget('posts');
     });
