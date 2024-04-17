@@ -33,7 +33,7 @@ class PostController extends Controller
         // return view('index ', compact('posts'));
 
     //USING CACHE WITH PAGINATION
-        $posts = Cache::remember('posts-page-'.request('page', 1), 60*3, function(){
+        $posts = Cache::remember('posts-page-'.request('page', 1), 3, function(){
             return Post::with('category')->paginate(3);
         });
 
