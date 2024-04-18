@@ -7,6 +7,7 @@ use App\Models\Post;
 use File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
 {
@@ -48,6 +49,12 @@ class PostController extends Controller
      */
     public function create()
     {
+        // AUTHORIZATION GATES
+            // Gate::authorize('create_post');
+        
+        // AUTHORIZATION POLICY
+            Gate::authorize('create', Post::class);
+
         $categories = Category::all();
         return view('create', compact('categories'));
     }
@@ -57,6 +64,12 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        // AUTHORIZATION GATES
+            // Gate::authorize('create_post');
+
+        // AUTHORIZATION POLICY
+        Gate::authorize('create', Post::class);
+
         $request->validate([
             'image' => 'required|max:2028|image',
             'title' => 'required|max:255',
@@ -91,7 +104,12 @@ class PostController extends Controller
      */
     public function edit(string $id)
      {
+        // AUTHORIZATION GATES
+            // Gate::authorize('edit_post');
+        
         $post = Post::findOrFail($id);
+        // AUTHORIZATION POLICY
+            Gate::authorize('update', $post);
         $categories = Category::all();
         return view('edit', compact('post', 'categories'));
     }
@@ -101,14 +119,19 @@ class PostController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        // AUTHORIZATION GATES
+            // Gate::authorize('edit_post');
+        
+        $post = Post::findOrFail($id);
+        // AUTHORIZATION POLICY
+            Gate::authorize('update', $post);
+
         $request->validate([
             'title' => 'required|max:255',
             'category_id' => 'required|integer',
             'description' => 'required',
         ]);
-
-        $post = Post::findOrFail($id);
-
+        
         if($request->hasFile('image')){
             $request->validate([
                 'image' => 'required|max:2028|image',
@@ -135,7 +158,13 @@ class PostController extends Controller
      */
     public function destroy(string $id)
     {
+        // AUTHORIZATION GATES
+            // Gate::authorize('delete_post');
+        
         $post = Post::findOrFail($id);
+        // AUTHORIZATION POLICY
+        Gate::authorize('delete', $post);
+
         $post->delete();
 
         return redirect('/posts');
@@ -143,21 +172,39 @@ class PostController extends Controller
 
     public function trashed()
     {
+        // AUTHORIZATION GATES
+            // Gate::authorize('delete_post');
+
         $posts = Post::onlyTrashed()->paginate(2);
+        // AUTHORIZATION POLICY
+        Gate::authorize('create', Post::class);
+
         return view('trashed', compact('posts'));
     }
 
     public function restore(string $id)
     {
-        $post = Post::onlyTrashed()->findOrFail($id);
-        $post->restore();
+        // AUTHORIZATION GATES
+            // Gate::authorize('delete_post');
+
+        $post = Post::onlyTrashed()->findOrFail($id);    
+        // AUTHORIZATION POLICY
+            Gate::authorize('delete', $post);
+
+            $post->restore();
 
         return redirect()->back();
     }
 
     public function forceDelete(string $id)
     {
+        // AUTHORIZATION GATES
+            // Gate::authorize('delete_post');
+
         $post = Post::onlyTrashed()->findOrFail($id); 
+        // AUTHORIZATION POLICY
+            Gate::authorize('delete', $post);
+
         File::delete(public_path($post->image));
         $post->forceDelete();
         

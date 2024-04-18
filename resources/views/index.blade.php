@@ -9,8 +9,15 @@
               <h4>All Posts</h4>
             </div>
             <div class="col-md-6 d-flex justify-content-end">
-              <a href="{{route('posts.create')}}" class="btn btn-success mx-1">Create</a>
-              <a href="{{route('posts.trashed')}}" class="btn btn-warning mx-1">Trashed</a>
+              {{-- Verifying Permissions in Blade Templates --}}
+              {{-- @can('create_post') --}}
+              {{-- Authorization - Policy --}}
+              @can('create', \App\Models\Post::class)
+                <a href="{{route('posts.create')}}" class="btn btn-success mx-1">Create</a>                
+              @endcan
+              @can('create', \App\Models\Post::class)
+                <a href="{{route('posts.trashed')}}" class="btn btn-warning mx-1">Trashed</a>
+              @endcan              
             </div>
           </div>
         </div>
@@ -41,13 +48,23 @@
                     <td>
                       <div class="d-flex">
                         <a href="{{route('posts.show', $post->id)}}" class="btn btn-sm btn-success m-1">Show</a>
-                        <a href="{{route('posts.edit', $post->id)}}" class="btn btn-sm btn-primary m-1" >Edit</a>
-                        {{-- <a href="" class="btn btn-sm btn-danger m-1">Delete</a> --}}
-                        <form action="{{route('posts.destroy', $post->id)}}" method="POST" enctype="multipart/form-data">
-                          @csrf
-                          @method('DELETE')
-                          <button class="btn btn-sm btn-danger m-1">Delete</button>
-                        </form>
+                        {{-- Verifying Permissions in Blade Templates --}}
+                        {{-- @can('edit_post') --}}
+                        {{-- Authorization - Policy --}}
+                        @can('update', $post)
+                          <a href="{{route('posts.edit', $post->id)}}" class="btn btn-sm btn-primary m-1" >Edit</a>                          
+                        @endcan
+                        {{-- Verifying Permissions in Blade Templates --}}
+                        {{-- @can('delete_post') --}}
+                        {{-- Authorization - Policy --}}
+                        @can('delete', $post)
+                          {{-- <a href="" class="btn btn-sm btn-danger m-1">Delete</a> --}}
+                          <form action="{{route('posts.destroy', $post->id)}}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn btn-sm btn-danger m-1">Delete</button>
+                          </form>
+                        @endcan
                       </div>
                     </td>
                   </tr>
