@@ -2,7 +2,11 @@
 
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
+use App\Jobs\SendMail;
+use App\Mail\PostPublished;
+use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -39,5 +43,16 @@ require __DIR__.'/auth.php';
                 return auth()->user()->name;
             });
 
+    });
+
+
+// QUEUEING AN EMAIL
+
+    Route::get('send-email', function(){
+        // Mail::send(new PostPublished());
+
+        // QUEUEING AN EMAIL
+            SendMail::dispatch();
+            dd('Queueing Email successfully!');
     });
 
