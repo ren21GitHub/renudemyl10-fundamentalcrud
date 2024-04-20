@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Jobs\SendMail;
 use App\Mail\PostPublished;
 use App\Models\Post;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -62,3 +63,15 @@ require __DIR__.'/auth.php';
         event(new UserRegistered($email));
         dd('Message Send');
     });
+
+// DEFINING AND RETRIEVING TRANSLATION STRINGS
+    Route::get('greeting', function () {
+        return view('greeting');
+    });
+
+// CHANGE TRANSLATION DEPENDING ON ROUTE
+    Route::get('greeting/{locale}', function($locale){
+
+        App::setLocale($locale);//set locale dynamically
+        return view('greeting');
+    })->name('greeting');
