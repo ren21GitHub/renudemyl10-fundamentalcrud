@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\UserRegistered;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Jobs\SendMail;
@@ -47,12 +48,17 @@ require __DIR__.'/auth.php';
 
 
 // QUEUEING AN EMAIL
-
     Route::get('send-email', function(){
         // Mail::send(new PostPublished());
 
         // QUEUEING AN EMAIL
-            SendMail::dispatch();
+            // SendMail::dispatch();
             dd('Queueing Email successfully!');
     });
 
+// PRACTICAL EXAMPLE OF EVENT - LISTENERS
+    Route::get('user-register', function () {
+        $email = 'renvane@gmail.com';//sample that it is a dynamic email
+        event(new UserRegistered($email));
+        dd('Message Send');
+    });
